@@ -70,3 +70,8 @@ http {
     }
 }
 EOF
+
+
+## Replace/add the relevant lines in /usr/loca/etc/php.ini
+
+`sed -i .bck-$(date "+%m%d%y")`
