@@ -19,7 +19,7 @@
 
 
 echo "create the /usr/local/etc/nginx/nginx.conf file"
-cat <<EOF > /home/root/install_nextcloud/nginx.conf
+cat <<EOF > /root/install_nextcloud/nginx.conf
 worker_processes 2;
 
 events {
