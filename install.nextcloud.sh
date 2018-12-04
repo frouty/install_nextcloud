@@ -116,6 +116,7 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noum
 
 # installation de nextcloud
 NCRELEASE=14.0.4
+echo "set the last release of nextcloud to $NCRELEASE"
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.asc
@@ -123,9 +124,11 @@ fetch https://nextcloud.com/nextcloud.asc
 
 # verify integrity
 # cd path to where is download nextcloud
+echo "Verify integrity"
 shasum -a 256 -c nextcloud-14.0.4.tar.bz2.sha256 < nextcloud-14.0.4.tar.bz2
 
 #verify authenticity
+echo "Verify authenticity"
 gpg --import nextcloud.asc                                                           
 gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 
