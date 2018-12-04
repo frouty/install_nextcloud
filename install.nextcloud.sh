@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "hello"
 
 
 # pkg update
@@ -79,10 +80,35 @@
 #cgi.fix_pathinfo=0				\
 #date.timezone = America/Los_Angeles		\
 #apc.enable_cli=1
-$PHPINI = "/usr/local/etc/php.ini"
-sed -i .bck-$(date +%d%m%Y) 's|^\([#;]? *cgi.fix_pathinfo *=\).*|\1"0"|g' $PHPINI
-sed -i .bck-$(date +%d%m%Y) 's|^\([#;]? *date.timezone *=\).*|\1"Pacific/Noumea"|g' $PHPINI
+PHPINI="/usr/local/etc/php.ini"
+echo "set variable path to php.ini : ${PHPINI}"
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
 
-## Replace/add the relevant lines in /usr/loca/etc/php.ini
-#`sed -i .bck-$(date "+%m%d%y")`
+
+## replace the relevant lines in /usr/local/etc/php-fmp.d/wwww.conf
+#listen = /var/run/php-fpm.sock
+#listen.owner = www
+#listen.group = www
+#env[PATH] = /usr/local/bin:/usr/bin:/bin 
+# toutes ces lignes existent et seule la premiere est  a modifier
+
+## /usr/local/etc/my.cnf
+# je ne trouve pas ce fichier
+#[server]
+#skip-networking
+#skip-name-resolve
+#expire_logs_days = 1
+#innodb_flush_method = O_DIRECT
+#skip-innodb_doublewrite
+#innodb_flush_log_at_trx_commit = 2
+#innodb_file_per_table
+
+
+## Replace /add the relevant lines in /usr/loca/etc/redis.conf
+#port 0
+#unixsocket /tmp/redis.sock
+#unixsocketperm 777
+# le fichier existe.
+
 
