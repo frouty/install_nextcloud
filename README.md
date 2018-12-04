@@ -87,3 +87,6 @@ Jails > Mount points >
 	
 	Setting primary cache In FreeNAS UserSpace Shell:
 	WebGUI > shell > $ zfs set primarycache=metadata mlp-pool/jail/nextcloud/data/nextcloud-db
+
+
+je ne trouve pas le fichier /usr/local/etc/my.cnf fichier de configuration de mysql. 
