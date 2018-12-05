@@ -1,3 +1,6 @@
+# créer la jail
+`iocage get all nomdejail`
+`iocage create -r 11.2-RELEASE -n unnomdejail  ip4_addr="igb0|10.66.0.241/24"`
 # avoir une plus jolie console.
 ## install zsh and others
 `pkg install zsh git wget powerline-font`  
@@ -13,22 +16,22 @@ logout and login
 sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 
 Add the following line to the "Files" section of xorg.conf or XF86Config:
-- FontPath "/usr/local/share/fonts/powerline-fonts/" Not done
+- FontPath "/usr/local/share/fonts/powerline-fonts/" 
+- Not done et cela marche.
 
 ## set the theme
 `sed -i .bck-$(date +%d%m%Y) 's|^\(ZSH_THEME *=\).*|\1"Mon Nouveau theme"|g' /path/to/.zshrc`  
 logout > login.  
 
-# pour avoir git 
-- `pkg install git`
 ## add new ssh key in git repository
+### utiliser vi pour faire un copier/coller de la clef. on peut laisser les retours à la ligne.
 ### add eval $(ssh-agent) in ~/.zshrc 
 - ssh-add <path to private key>
 
 ## set ssh for jail.
-service ssh on dans le WEBGUI
-ssh lfs@10.66.0.240
-iocage console nomdejail
+- `service ssh on dans le WEBGUI`
+- `ssh lfs@10.66.0.240`
+- `iocage console nomdejail`
 
 
 # INSTALLATION DE NEXTCLOUD
@@ -90,3 +93,18 @@ Jails > Mount points >
 
 
 je ne trouve pas le fichier /usr/local/etc/my.cnf fichier de configuration de mysql. 
+
+
+# administration de la database 
+
+- on se connect : `mysql -u root -p` 
+- passwd : habituel
+- pour avoir la liste des databases : `show databases;`
+- pour avoir la liste des tables:
+  - on se connecte à la database : `use unnomdetable`
+  - `show tables;`
+
+## comment connaitre la version 
+- on se connect : `mysql -u root -p` 
+- passwd : habituel
+- `\s`
