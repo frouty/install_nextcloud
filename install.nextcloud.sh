@@ -22,58 +22,58 @@ pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
-# echo "create the /usr/local/etc/nginx/nginx.conf file"
-# cat <<EOF > /root/install_nextcloud/nginx.conf
-# worker_processes 2;
+echo "create the /usr/local/etc/nginx/nginx.conf file"
+cat <<EOF > /root/install_nextcloud/nginx.conf
+worker_processes 2;
 
-# events {
-#     worker_connections  1024;
-# }
+events {
+     worker_connections  1024;
+ }
 
-# http {
-#     include      mime.types;
-#     default_type  application/octet-stream;
-#     sendfile        off;
-#     keepalive_timeout  65;
-#     gzip off;
+ http {
+     include      mime.types;
+     default_type  application/octet-stream;
+     sendfile        off;
+     keepalive_timeout  65;
+     gzip off;
 
-#     server {
-#         root /usr/local/www;
-#         location = /robots.txt { allow all; access_log off; log_not_found off; }
-#         location = /favicon.ico { access_log off; log_not_found off; }
-#         location ^~ /nextcloud {s
-#             error_page 403 /nextcloud/core/templates/403.php;
-#             error_page 404 /owncloud/core/templates/404.php;
-#             location /owncloud {
-#                 rewrite ^ /owncloud/index.php$request_uri;
-#             }
-#             location ~ ^/owncloud/(?:build|tests|config|lib|3rdparty|templates|data)/ {
-#                 deny all;
-#             }
-#             location ~ ^/owncloud/(?:\.|autotest|occ|issue|indie|db_|console) {
-#                 deny all;
-#             }
-#             location ~ ^/owncloud/(?:index|remote|public|cron|core/ajax/update|status|ocs/v[12]|updater/.+|ocs-provider/.+|core/templates/40[34])\.php(?:$|/) {
-#                 fastcgi_split_path_info ^(.+\.php)(/.*)$;
-#                 include fastcgi_params;
-#                 fastcgi_pass unix:/var/run/php-fpm.sock;
-#                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-#                 fastcgi_param PATH_INFO $fastcgi_path_info;
-#                 fastcgi_param front_controller_active true;
-#                 fastcgi_intercept_errors on;
-#             }
-#             location ~* \.(?:css|js|woff|svg|gif)$ {
-#                 try_files $uri /owncloud/index.php$request_uri;
-#                 add_header Cache-Control max-age=15778463;
-#             }
-#             location ~* \.(?:png|html|ttf|ico|jpg|jpeg)$ {
-#                 try_files $uri /owncloud/index.php$request_uri;
-#             }
+     server {
+         root /usr/local/www;
+         location = /robots.txt { allow all; access_log off; log_not_found off; }
+         #location = /nextcloud/core/img/favicon.ico { access_log off; log_not_found off; } je ne le trouve pas
+         location ^~ /nextcloud {s
+             error_page 403 /nextcloud/core/templates/403.php;
+             error_page 404 /nextcloud/core/templates/404.php;
+             location /nextcloud {
+                 rewrite ^ /nextcloud/index.php$request_uri;
+             }
+             location ~ ^/nextcloud/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+                 deny all;
+             }
+             location ~ ^/nextcloud/(?:\.|autotest|occ|issue|indie|db_|console) {
+                 deny all;
+             }
+             location ~ ^/nextcloud/(?:index|remote|public|cron|core/ajax/update|status|ocs/v[12]|updater/.+|ocs-provider/.+|core/templates/40[34])\.php(?:$|/) {
+                 fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                 include fastcgi_params;
+                 fastcgi_pass unix:/var/run/php-fpm.sock;
+                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                 fastcgi_param PATH_INFO $fastcgi_path_info;
+                 fastcgi_param front_controller_active true;
+                 fastcgi_intercept_errors on;
+             }
+             location ~* \.(?:css|js|woff|svg|gif)$ {
+                 try_files $uri /nextcloud/index.php$request_uri;
+                 add_header Cache-Control max-age=15778463;
+             }
+             location ~* \.(?:png|html|ttf|ico|jpg|jpeg)$ {
+                 try_files $uri /nextcloud/index.php$request_uri;
+             }
 
-#         }
-#     }
-# }
-# EOF
+         }
+     }
+ }
+ EOF
 
 
 # replace the relevant lines in /usr/local/etc/php.ini
