@@ -6,7 +6,7 @@
 - `iocage console unnomdejail`
 # avoir une plus jolie console.
 ## install zsh and others
-`[jail]pkg install zsh git wget powerline-font`  
+`[jail]pkg install tree zsh git wget powerline-fonts`  
 `[jail]zsh --version`  
 ## set zsh as your default shell
 `[jail]chsh -s zsh`
@@ -95,8 +95,21 @@ Jails > Mount points >
 	WebGUI > shell > $ zfs set primarycache=metadata mlp-pool/jail/nextcloud/data/nextcloud-db
 
 
-je ne trouve pas le fichier /usr/local/etc/my.cnf fichier de configuration de mysql. 
+# je ne trouve pas le fichier /usr/local/etc/my.cnf fichier de configuration de mysql.
+il faut regarder le script /usr/local/etc/rc.d/mysql-server on trouve :
+```
+: ${mysql_dbdir="/var/db/mysql"}
+: ${mysql_optfile="${mysql_dbdir}/my.cnf"}
 
+```
+Ce qui veut dire que le fichier my.cnf est sous /var/db/mysql. Je ne le trouve pas. 
+
+Il est écrit partout que mysql marche tres bien sans fichier de configuration
+
+On peut trouver les fichiers qu'un port install dans sa pkg-plist in usr/ports/databases/mysql80-server/pkg-plist.
+
+Mariadb est un fork de mysql. 
+On ne peut pas installer mardiadb et mysql en meme temps.
 ## utiliser le script install_nexcloud.sh du rep install_nexcloud dans github
 
 # administration de la database 

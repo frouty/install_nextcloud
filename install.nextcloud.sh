@@ -5,7 +5,7 @@ echo "hello"
 
 # pkg update
 ## install package for easy use of jail
-# pkg install git emacs
+# pkg install git emacs tree wget zsh poxerline-fonts
 ## install package for nextcloud
 # pkg install nginx mariadb101-server redis php71-bz2 php71-ctype php71-curl php71-dom php71-exif php71-fileinfo php71-filter php71-gd php71-hash 
 # php71-iconv php71-intl php71-json php71-mbstring php71-mcrypt php71-pdo_mysql php71-openssl php71-posix php71-session php71-simplexml php71-xml 
@@ -80,12 +80,15 @@ echo "hello"
 #cgi.fix_pathinfo=0				\
 #date.timezone = America/Los_Angeles		\
 #apc.enable_cli=1
-PHPINI="/usr/local/etc/php.ini"
-echo "set variable path to php.ini : ${PHPINI}"
-sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
-sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
+#PHPINI="/usr/local/etc/php.ini"
+#echo "set variable path to php.ini : ${PHPINI}"
+#sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
+#sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
 
-
+if  grep apc.enable_cli /usr/local/etc/php.ini;
+then echo "hello I found apc.enable_cli"
+else echo "Ooops I don't find it"
+     
 ## replace the relevant lines in /usr/local/etc/php-fmp.d/wwww.conf
 #listen = /var/run/php-fpm.sock
 #listen.owner = www
