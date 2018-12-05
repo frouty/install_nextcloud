@@ -104,7 +104,7 @@ je ne trouve pas le fichier /usr/local/etc/my.cnf fichier de configuration de my
 - passwd : habituel
 - pour avoir la liste des databases : `show databases;`
 - pour avoir la liste des tables:
-  - on se connecte à la database : `use unnomdetable`
+  - on se connecte à la database : `use unnomdetable;`
   - `show tables;`
 
 ## comment connaitre la version 
