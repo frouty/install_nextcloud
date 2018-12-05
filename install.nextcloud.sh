@@ -23,7 +23,7 @@ cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
 echo "create the /usr/local/etc/nginx/nginx.conf file"
-cat <<EOF > /root/install_nextcloud/nginx.conf
+cat >  /root/install_nextcloud/nginx.conf << 'EOF'
 worker_processes 2;
 
 events {
