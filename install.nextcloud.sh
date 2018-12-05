@@ -1,15 +1,17 @@
 #!/bin/sh
 
-echo "hello"
-
+echo "Install nextcloud"
+echo "Let's go..."
 
 # pkg update
+
 ## install package for easy use of jail
 # pkg install git emacs tree wget zsh poxerline-fonts
+
 ## install package for nextcloud
-# pkg install nginx mariadb101-server redis php71-bz2 php71-ctype php71-curl php71-dom php71-exif php71-fileinfo php71-filter php71-gd php71-hash 
-# php71-iconv php71-intl php71-json php71-mbstring php71-mcrypt php71-pdo_mysql php71-openssl php71-posix php71-session php71-simplexml php71-xml 
-# php71-xmlreader php71-xmlwriter php71-xsl php71-wddx php71-zip php71-zlib php71-opcache
+pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash 
+php72-iconv php72-intl php72-json php72-mbstring php72-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml 
+php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
 
 
 #portsnap fetch extract
@@ -19,7 +21,7 @@ echo "hello"
 #sysrc 'php_fpm_enable=YES' 
 #sysrc 'mysql_enable=YES' 
 #sysrc 'redis_enable=YES'
-#cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
+cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
 # echo "create the /usr/local/etc/nginx/nginx.conf file"
@@ -88,7 +90,7 @@ echo "hello"
 if  grep apc.enable_cli /usr/local/etc/php.ini;
 then echo "hello I found apc.enable_cli"
 else echo "Ooops I don't find it"
-     
+fi     
 ## replace the relevant lines in /usr/local/etc/php-fmp.d/wwww.conf
 #listen = /var/run/php-fpm.sock
 #listen.owner = www
@@ -117,26 +119,26 @@ else echo "Ooops I don't find it"
 
 
 
-# installation de nextcloud
-NCRELEASE=14.0.4
-echo "set the last release of nextcloud to $NCRELEASE"
-fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
-fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
-fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.asc
-fetch https://nextcloud.com/nextcloud.asc
+## installation de nextcloud
+#NCRELEASE=14.0.4
+#echo "set the last release of nextcloud to $NCRELEASE"
+#fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
+#fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
+#fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.asc
+#fetch https://nextcloud.com/nextcloud.asc
 
 # verify integrity
 # cd path to where is download nextcloud
 echo "Verify integrity"
-shasum -a 256 -c nextcloud-14.0.4.tar.bz2.sha256 < nextcloud-14.0.4.tar.bz2
+#shasum -a 256 -c nextcloud-14.0.4.tar.bz2.sha256 < nextcloud-14.0.4.tar.bz2
 
 #verify authenticity
 echo "Verify authenticity"
-gpg --import nextcloud.asc                                                           
-gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
+#gpg --import nextcloud.asc                                                           
+#gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 
 #
 # cd path where you download nextcloud
-tar -jxf nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
+#tar -jxf nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
 #chown -R www:www /usr/local/www/owncloud /mnt/files
