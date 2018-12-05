@@ -73,7 +73,7 @@ events {
          }
      }
  }
- EOF
+EOF
 
 
 # replace the relevant lines in /usr/local/etc/php.ini
