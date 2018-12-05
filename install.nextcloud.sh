@@ -184,6 +184,17 @@ tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # mysql -e "FLUSH PRIVILEGES;"
 # mysql_secure_installation
 
+# service mysql-server start
+# mysql_secure_installation
+# add a root and password user
+# log to mysql -u root -
+# create nextcloud database, et nexcloud user.
+#CREATE DATABASE nextcloud; 
+#CREATE USER 'datamanager'@'localhost' IDENTIFIED BY 'MAKEUP-YOUR-OWN-PASSWORD'; 
+#GRANT ALL PRIVILEGES ON nextcloud.* TO datamanager@'localhost' iDENTIFIED BY password; 
+#FLUSH PRIVILEGES; 
+
+exit 
 
 # crontab -u www -e
 # apppend
