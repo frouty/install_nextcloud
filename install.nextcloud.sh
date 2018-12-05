@@ -178,6 +178,12 @@ tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
 #chown -R www:www /usr/local/www/owncloud /mnt/files
 
+# service nginx start && service php-fpm start && service mysql-server start && service redis start
+# mysql -e "CREATE DATABASE owncloud;"
+# mysql -e "GRANT ALL PRIVILEGES ON owncloud.* TO 'ocuser'@'localhost' IDENTIFIED BY 'ocpass';"
+# mysql -e "FLUSH PRIVILEGES;"
+# mysql_secure_installation
+
 
 # crontab -u www -e
 # apppend
