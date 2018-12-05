@@ -6,11 +6,14 @@ echo "Let's go..."
 # pkg update
 
 ## install package for easy use of jail
-# pkg install git emacs tree wget zsh poxerline-fonts
+# pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
 
 ## install package for nextcloud
 pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
 
+## mkdir /root/tmp
+mkdir /root/tmp
+TEMP="/root/tmp"
 
 #portsnap fetch extract
 #make config-recursive install -C /usr/ports/databases/pecl-redis
@@ -23,7 +26,7 @@ cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
 echo "create the /usr/local/etc/nginx/nginx.conf file"
-cat >  /root/install_nextcloud/nginx.conf << 'EOF'
+cat >  /root/$TEMP/nginx.conf << 'EOF'
 worker_processes 2;
 
 events {
@@ -40,7 +43,7 @@ events {
      server {
          root /usr/local/www;
          location = /robots.txt { allow all; access_log off; log_not_found off; }
-         #location = /nextcloud/core/img/favicon.ico { access_log off; log_not_found off; } je ne le trouve pas
+         location = /nextcloud/core/img/favicon.ico { access_log off; log_not_found off; }
          location ^~ /nextcloud {s
              error_page 403 /nextcloud/core/templates/403.php;
              error_page 404 /nextcloud/core/templates/404.php;
@@ -151,7 +154,8 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocketperm\>)( *).*|\2 777|' 
 
 
 ## installation de nextcloud
-NCRELEASE="14.0.4"
+NCRELEASE="14.0.4
+cd $TEMP"
 echo "set the last release of nextcloud to $NCRELEASE"
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
@@ -170,7 +174,7 @@ gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 
 #
 # cd path where you download nextcloud
-tar -jxf nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
+tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
 #chown -R www:www /usr/local/www/owncloud /mnt/files
 
@@ -178,3 +182,5 @@ tar -jxf nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # crontab -u www -e
 # apppend
 # */15 * * * * /usr/local/bin/php -f /usr/local/www/nextcloud/cron.php
+
+
