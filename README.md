@@ -1,6 +1,9 @@
 # créer la jail
-`iocage get all nomdejail`
-`iocage create -r 11.2-RELEASE -n unnomdejail  ip4_addr="igb0|10.66.0.241/24"`
+- `iocage fetch` # pour avoir la liste des releases
+- `iocage create -r 11.2-RELEASE -n unnomdejail  ip4_addr="igb0|10.66.0.241/24"`
+# se connecter à la nouvelle jail
+- `iocage start unnomdejail`
+- `iocage console unnomdejail`
 # avoir une plus jolie console.
 ## install zsh and others
 `pkg install zsh git wget powerline-font`  
