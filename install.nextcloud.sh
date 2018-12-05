@@ -9,9 +9,7 @@ echo "Let's go..."
 # pkg install git emacs tree wget zsh poxerline-fonts
 
 ## install package for nextcloud
-pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash 
-php72-iconv php72-intl php72-json php72-mbstring php72-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml 
-php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
+pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
 
 
 #portsnap fetch extract
@@ -43,8 +41,8 @@ cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 #         root /usr/local/www;
 #         location = /robots.txt { allow all; access_log off; log_not_found off; }
 #         location = /favicon.ico { access_log off; log_not_found off; }
-#         location ^~ /owncloud {s
-#             error_page 403 /owncloud/core/templates/403.php;
+#         location ^~ /nextcloud {s
+#             error_page 403 /nextcloud/core/templates/403.php;
 #             error_page 404 /owncloud/core/templates/404.php;
 #             location /owncloud {
 #                 rewrite ^ /owncloud/index.php$request_uri;
@@ -82,21 +80,50 @@ cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 #cgi.fix_pathinfo=0				\
 #date.timezone = America/Los_Angeles		\
 #apc.enable_cli=1
-#PHPINI="/usr/local/etc/php.ini"
-#echo "set variable path to php.ini : ${PHPINI}"
+PHPINI="/usr/local/etc/php.ini"
+echo "set variable path to php.ini : ${PHPINI}"
 #sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
 #sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
 
-if  grep apc.enable_cli /usr/local/etc/php.ini;
-then echo "hello I found apc.enable_cli"
-else echo "Ooops I don't find it"
+if grep cgi.fix_pathinfo $PHPINI;
+then
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
+else
+    echo 'cgi.fix_pathinfo=0' >> $PHPINI
+fi
+
+if grep date.timezone $PHPINI;
+then
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
+else
+    echo 'ate.timezone = Pacific/Noumea' >> $PHPINI
+fi
+
+if  grep apc.enable_cli $PHPINI;
+then
+    echo "hello I found apc.enable_cli"
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(apc.enable_cli *=).*|\2"1"|g' $PHPINI  
+else
+    echo "Ooops I don't find it"
+    echo 'apc.enable_cli=1' >> $PHPINI
 fi     
+
+
 ## replace the relevant lines in /usr/local/etc/php-fmp.d/wwww.conf
 #listen = /var/run/php-fpm.sock
 #listen.owner = www
 #listen.group = www
 #env[PATH] = /usr/local/bin:/usr/bin:/bin 
 # toutes ces lignes existent et seule la premiere est  a modifier
+
+WWWCONF="/usr/local/etc/php-fpm.d/www.conf"
+
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen *=).*|\2"/var/run/php-fpm.sock"|g' $WWWCONF
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.owner *=).*|\2"www"|g' $WWWCONF
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.group *=).*|\2"www"|g' $WWWCONF
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(env[PATH] *=).*|\2"/usr/local/bin:/usr/bin:/bin"|g' $WWWCONF
+
+
 
 ## /usr/local/etc/my.cnf
 # je ne trouve pas ce fichier
@@ -110,35 +137,44 @@ fi
 #innodb_file_per_table
 
 
-## Replace /add the relevant lines in /usr/loca/etc/redis.conf
+## Replace /add the relevant lines in /usr/local/etc/redis.conf
 #port 0
 #unixsocket /tmp/redis.sock
 #unixsocketperm 777
 # le fichier existe.
+REDISCONF="/usr/local/etc/redis.conf"
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<port\>)( *).*|\2 0|' $REDISCONF
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocket\>)( *).*|\2 /tmp/redis.sock|' $REDISCONF
+sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocketperm\>)( *).*|\2 777|' $REDISCONF
 
 
 
 
 ## installation de nextcloud
-#NCRELEASE=14.0.4
-#echo "set the last release of nextcloud to $NCRELEASE"
-#fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
-#fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
-#fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.asc
-#fetch https://nextcloud.com/nextcloud.asc
+NCRELEASE="14.0.4"
+echo "set the last release of nextcloud to $NCRELEASE"
+fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
+fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
+fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.asc
+fetch https://nextcloud.com/nextcloud.asc
 
 # verify integrity
 # cd path to where is download nextcloud
 echo "Verify integrity"
-#shasum -a 256 -c nextcloud-14.0.4.tar.bz2.sha256 < nextcloud-14.0.4.tar.bz2
+shasum -a 256 -c nextcloud-14.0.4.tar.bz2.sha256 < nextcloud-14.0.4.tar.bz2
 
 #verify authenticity
 echo "Verify authenticity"
-#gpg --import nextcloud.asc                                                           
-#gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
+gpg --import nextcloud.asc                                                           
+gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 
 #
 # cd path where you download nextcloud
-#tar -jxf nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
+tar -jxf nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
 #chown -R www:www /usr/local/www/owncloud /mnt/files
+
+
+# crontab -u www -e
+# apppend
+# */15 * * * * /usr/local/bin/php -f /usr/local/www/nextcloud/cron.php
