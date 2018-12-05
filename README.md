@@ -97,6 +97,7 @@ Jails > Mount points >
 
 je ne trouve pas le fichier /usr/local/etc/my.cnf fichier de configuration de mysql. 
 
+## utiliser le script install_nexcloud.sh du rep install_nexcloud dans github
 
 # administration de la database 
 
