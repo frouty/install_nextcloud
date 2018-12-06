@@ -18,19 +18,21 @@ TEMP="/root/tmp"
 portsnap fetch extract
 make config-recursive install -C /usr/ports/databases/pecl-redis
 make config-recursive install -C /usr/ports/devel/pecl-APCu
-sysrc 'nginx_enable=YES' 
-sysrc 'php_fpm_enable=YES' 
+
+#sysrc 'nginx_enable=YES' 
+#sysrc 'php_fpm_enable=YES' 
 #sysrc 'mysql_enable=YES' 
 #sysrc 'redis_enable=YES'
 # ou
 # sysrc {ntpdate,nginx,postgresql,php_fpm}_enable=YES
-#sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES
-#sysrc ntpdate_hosts=0.oceania.pool.ntp.org
+sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES
+sysrc ntpdate_hosts=0.oceania.pool.ntp.org
+
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
 echo "create the /usr/local/etc/nginx/nginx.conf file"
-cat >  /root/$TEMP/nginx.conf << 'EOF'
+cat >  $TEMP/nginx.conf << 'EOF'
 worker_processes 2;
 
 events {
@@ -81,7 +83,7 @@ events {
      }
  }
 EOF
-
+cp $TEMP/nginx.conf /usr/local/etc/nginx/
 
 # replace the relevant lines in /usr/local/etc/php.ini
 #cgi.fix_pathinfo=0				\
@@ -142,7 +144,17 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(env[PATH] *=).*|\2"/usr/local/bin:/
 #skip-innodb_doublewrite
 #innodb_flush_log_at_trx_commit = 2
 #innodb_file_per_table
-
+cat >  $TEMP/my.cnf << 'EOF'
+[server]
+skip-networking
+skip-name-resolve
+expire_logs_days = 1
+innodb_flush_method = O_DIRECT
+skip-innodb_doublewrite
+innodb_flush_log_at_trx_commit = 2
+innodb_file_per_table
+EOF
+cp $TEMP/my.cnf /usr/local/etc/
 
 ## Replace /add the relevant lines in /usr/local/etc/redis.conf
 #port 0
@@ -182,7 +194,8 @@ tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
 #chown -R www:www /usr/local/www/owncloud /mnt/files
 
-# service nginx start && service php-fpm start && service mysql-server start && service redis start
+service nginx start && service php-fpm start && service mysql-server start && service redis start
+exit 1
 # mysql -e "CREATE DATABASE owncloud;"
 # mysql -e "GRANT ALL PRIVILEGES ON owncloud.* TO 'ocuser'@'localhost' IDENTIFIED BY 'ocpass';"
 # mysql -e "FLUSH PRIVILEGES;"
@@ -197,8 +210,7 @@ tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 #CREATE USER 'datamanager'@'localhost' IDENTIFIED BY 'MAKEUP-YOUR-OWN-PASSWORD'; 
 #GRANT ALL PRIVILEGES ON nextcloud.* TO datamanager@'localhost' iDENTIFIED BY password; 
 #FLUSH PRIVILEGES; 
-
-exit 
+ 
 
 # crontab -u www -e
 # apppend
