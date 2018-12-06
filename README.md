@@ -110,6 +110,7 @@ On peut trouver les fichiers qu'un port install dans sa pkg-plist in usr/ports/d
 
 Mariadb est un fork de mysql. 
 On ne peut pas installer mardiadb et mysql en meme temps.
+
 ## utiliser le script install_nexcloud.sh du rep install_nexcloud dans github
 
 # administration de la database 

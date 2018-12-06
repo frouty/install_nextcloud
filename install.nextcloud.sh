@@ -3,7 +3,7 @@
 echo "Install nextcloud"
 echo "Let's go..."
 
-# pkg update
+pkg update
 
 ## install package for easy use of jail
 pkg install git emacs tree wget zsh powerline-fonts pgpgpg
@@ -19,14 +19,15 @@ portsnap fetch extract
 make config-recursive install -C /usr/ports/databases/pecl-redis
 make config-recursive install -C /usr/ports/devel/pecl-APCu
 
-#sysrc 'nginx_enable=YES' 
-#sysrc 'php_fpm_enable=YES' 
-#sysrc 'mysql_enable=YES' 
-#sysrc 'redis_enable=YES'
+sysrc 'nginx_enable=YES' 
+sysrc 'php_fpm_enable=YES' 
+sysrc 'mysql_enable=YES' 
+sysrc 'redis_enable=YES'
 # ou
 # sysrc {ntpdate,nginx,postgresql,php_fpm}_enable=YES
-sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES
-sysrc ntpdate_hosts=0.oceania.pool.ntp.org
+#sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES j'ai pas l'impression que cela marche
+sysrc 'ntpdate_enable=YES'
+sysrc 'ntpdate_hosts=0.oceania.pool.ntp.org'
 
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
@@ -217,3 +218,5 @@ exit 1
 # */15 * * * * /usr/local/bin/php -f /usr/local/www/nextcloud/cron.php
 
 
+/usr/local/bin/perl5.26.3: No such file or directory
+*** Error code 127
