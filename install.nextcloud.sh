@@ -3,10 +3,10 @@
 echo "Install nextcloud"
 echo "Let's go..."
 
-# pkg update
+pkg update
 
 ## install package for easy use of jail
-# pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
+pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
 
 ## install package for nextcloud
 pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
@@ -15,22 +15,23 @@ pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72
 mkdir /root/tmp
 TEMP="/root/tmp"
 
-#portsnap fetch extract
-#make config-recursive install -C /usr/ports/databases/pecl-redis
-#make config-recursive install -C /usr/ports/devel/pecl-APCu
+portsnap fetch extract
+make config-recursive install -C /usr/ports/databases/pecl-redis
+make config-recursive install -C /usr/ports/devel/pecl-APCu
 #sysrc 'nginx_enable=YES' 
 #sysrc 'php_fpm_enable=YES' 
 #sysrc 'mysql_enable=YES' 
 #sysrc 'redis_enable=YES'
 # ou
 # sysrc {ntpdate,nginx,postgresql,php_fpm}_enable=YES
-#sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES
-#sysrc ntpdate_hosts=0.oceania.pool.ntp.org
+sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES
+sysrc ntpdate_hosts=0.oceania.pool.ntp.org
+
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
 echo "create the /usr/local/etc/nginx/nginx.conf file"
-cat >  /root/$TEMP/nginx.conf << 'EOF'
+cat >  $TEMP/nginx.conf << 'EOF'
 worker_processes 2;
 
 events {
@@ -158,8 +159,8 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocketperm\>)( *).*|\2 777|' 
 
 
 ## installation de nextcloud
-NCRELEASE="14.0.4
-cd $TEMP"
+NCRELEASE="14.0.4"
+cd $TEMP
 echo "set the last release of nextcloud to $NCRELEASE"
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
