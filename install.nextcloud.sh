@@ -6,7 +6,7 @@ echo "Let's go..."
 # pkg update
 
 ## install package for easy use of jail
-# pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
+pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
 
 ## install package for nextcloud
 pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
@@ -15,11 +15,11 @@ pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72
 mkdir /root/tmp
 TEMP="/root/tmp"
 
-#portsnap fetch extract
-#make config-recursive install -C /usr/ports/databases/pecl-redis
-#make config-recursive install -C /usr/ports/devel/pecl-APCu
-#sysrc 'nginx_enable=YES' 
-#sysrc 'php_fpm_enable=YES' 
+portsnap fetch extract
+make config-recursive install -C /usr/ports/databases/pecl-redis
+make config-recursive install -C /usr/ports/devel/pecl-APCu
+sysrc 'nginx_enable=YES' 
+sysrc 'php_fpm_enable=YES' 
 #sysrc 'mysql_enable=YES' 
 #sysrc 'redis_enable=YES'
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
