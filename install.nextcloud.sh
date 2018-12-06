@@ -6,7 +6,8 @@ echo "Let's go..."
 pkg update
 
 ## install package for easy use of jail
-pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
+pkg install git emacs tree wget zsh powerline-fonts pgpgpg
+
 
 ## install package for nextcloud
 pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
@@ -18,6 +19,7 @@ TEMP="/root/tmp"
 portsnap fetch extract
 make config-recursive install -C /usr/ports/databases/pecl-redis
 make config-recursive install -C /usr/ports/devel/pecl-APCu
+
 #sysrc 'nginx_enable=YES' 
 #sysrc 'php_fpm_enable=YES' 
 #sysrc 'mysql_enable=YES' 
@@ -29,8 +31,7 @@ sysrc ntpdate_hosts=0.oceania.pool.ntp.org
 
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
-
-echo "create the /usr/local/etc/nginx/nginx.conf file"
+echo -e "\n ---- create the /usr/local/etc/nginx/nginx.conf file ----"
 cat >  $TEMP/nginx.conf << 'EOF'
 worker_processes 2;
 
@@ -82,14 +83,14 @@ events {
      }
  }
 EOF
-
+cp $TEMP/nginx.conf /usr/local/etc/nginx/
 
 # replace the relevant lines in /usr/local/etc/php.ini
 #cgi.fix_pathinfo=0				\
 #date.timezone = America/Los_Angeles		\
 #apc.enable_cli=1
 PHPINI="/usr/local/etc/php.ini"
-echo "set variable path to php.ini : ${PHPINI}"
+echo "\n ---- set variable path to php.ini : ${PHPINI} ----"
 #sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
 #sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
 
@@ -143,7 +144,17 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(env[PATH] *=).*|\2"/usr/local/bin:/
 #skip-innodb_doublewrite
 #innodb_flush_log_at_trx_commit = 2
 #innodb_file_per_table
-
+cat >  $TEMP/my.cnf << 'EOF'
+[server]
+skip-networking
+skip-name-resolve
+expire_logs_days = 1
+innodb_flush_method = O_DIRECT
+skip-innodb_doublewrite
+innodb_flush_log_at_trx_commit = 2
+innodb_file_per_table
+EOF
+cp $TEMP/my.cnf /usr/local/etc/
 
 ## Replace /add the relevant lines in /usr/local/etc/redis.conf
 #port 0
@@ -159,6 +170,7 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocketperm\>)( *).*|\2 777|' 
 
 
 ## installation de nextcloud
+
 NCRELEASE="14.0.4"
 cd $TEMP
 echo "set the last release of nextcloud to $NCRELEASE"
@@ -181,9 +193,10 @@ gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 # cd path where you download nextcloud
 tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
-#chown -R www:www /usr/local/www/owncloud /mnt/files
+chown -R www:www /usr/local/www/nextcloud /mnt/files
 
-# service nginx start && service php-fpm start && service mysql-server start && service redis start
+service nginx start && service php-fpm start && service mysql-server start && service redis start
+exit 1
 # mysql -e "CREATE DATABASE owncloud;"
 # mysql -e "GRANT ALL PRIVILEGES ON owncloud.* TO 'ocuser'@'localhost' IDENTIFIED BY 'ocpass';"
 # mysql -e "FLUSH PRIVILEGES;"
@@ -198,8 +211,7 @@ tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 #CREATE USER 'datamanager'@'localhost' IDENTIFIED BY 'MAKEUP-YOUR-OWN-PASSWORD'; 
 #GRANT ALL PRIVILEGES ON nextcloud.* TO datamanager@'localhost' iDENTIFIED BY password; 
 #FLUSH PRIVILEGES; 
-
-exit 
+ 
 
 # crontab -u www -e
 # apppend
