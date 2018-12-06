@@ -6,7 +6,7 @@ echo "Let's go..."
 # pkg update
 
 ## install package for easy use of jail
-pkg install git emacs tree wget zsh poxerline-fonts pgpgpg
+pkg install git emacs tree wget zsh powerline-fonts pgpgpg
 
 ## install package for nextcloud
 pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
@@ -31,7 +31,7 @@ sysrc ntpdate_hosts=0.oceania.pool.ntp.org
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
-echo "create the /usr/local/etc/nginx/nginx.conf file"
+echo -e "\n ---- create the /usr/local/etc/nginx/nginx.conf file ----"
 cat >  $TEMP/nginx.conf << 'EOF'
 worker_processes 2;
 
@@ -90,7 +90,7 @@ cp $TEMP/nginx.conf /usr/local/etc/nginx/
 #date.timezone = America/Los_Angeles		\
 #apc.enable_cli=1
 PHPINI="/usr/local/etc/php.ini"
-echo "set variable path to php.ini : ${PHPINI}"
+echo "\n ---- set variable path to php.ini : ${PHPINI} ----"
 #sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(cgi.fix_pathinfo *=).*|\2"0"|g' $PHPINI
 #sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
 
@@ -171,7 +171,7 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocketperm\>)( *).*|\2 777|' 
 
 ## installation de nextcloud
 NCRELEASE="14.0.4
-cd $TEMP"
+cd $TEMP
 echo "set the last release of nextcloud to $NCRELEASE"
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2.sha256
