@@ -8,6 +8,7 @@ pkg update
 ## install package for easy use of jail
 pkg install git emacs tree wget zsh powerline-fonts pgpgpg
 
+
 ## install package for nextcloud
 pkg install nginx mariadb103-server redis php72-bz2 php72-ctype php72-curl php72-dom php72-exif php72-fileinfo php72-filter php72-gd php72-hash php72-iconv php72-intl php72-json php72-mbstring php72-pecl-mcrypt php72-pdo_mysql php72-openssl php72-posix php72-session php72-simplexml php72-xml php72-xmlreader php72-xmlwriter php72-xsl php72-wddx php72-zip php72-zlib php72-opcache
 
@@ -30,7 +31,6 @@ sysrc 'ntpdate_enable=YES'
 sysrc 'ntpdate_hosts=0.oceania.pool.ntp.org'
 
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
-
 
 echo -e "\n ---- create the /usr/local/etc/nginx/nginx.conf file ----"
 cat >  $TEMP/nginx.conf << 'EOF'
@@ -171,7 +171,8 @@ sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(\<unixsocketperm\>)( *).*|\2 777|' 
 
 
 ## installation de nextcloud
-NCRELEASE="14.0.4
+
+NCRELEASE="14.0.4"
 cd $TEMP
 echo "set the last release of nextcloud to $NCRELEASE"
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
@@ -193,7 +194,7 @@ gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 # cd path where you download nextcloud
 tar -jxf $TEMP/nextcloud-$NCRELEASE.tar.bz2 -C /usr/local/www
 # rm nextcloud-$NCRELEASE.tar.bz2
-#chown -R www:www /usr/local/www/owncloud /mnt/files
+chown -R www:www /usr/local/www/nextcloud /mnt/files
 
 service nginx start && service php-fpm start && service mysql-server start && service redis start
 exit 1
