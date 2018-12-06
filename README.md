@@ -125,3 +125,7 @@ On ne peut pas installer mardiadb et mysql en meme temps.
 - on se connect : `mysql -u root -p` 
 - passwd : habituel
 - `\s`
+
+
+# autre tuto sur l'install de nexcloud freebsd11 et nginx et postgresql
+http://unflyingobject.com/posts/nextcloud-12-from-scratch-with-freebsd-11/

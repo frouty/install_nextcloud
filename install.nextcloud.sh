@@ -22,6 +22,10 @@ sysrc 'nginx_enable=YES'
 sysrc 'php_fpm_enable=YES' 
 #sysrc 'mysql_enable=YES' 
 #sysrc 'redis_enable=YES'
+# ou
+# sysrc {ntpdate,nginx,postgresql,php_fpm}_enable=YES
+#sysrc {ntpdate,nginx,mysql,php_fpm}_enable=YES
+#sysrc ntpdate_hosts=0.oceania.pool.ntp.org
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 
 
