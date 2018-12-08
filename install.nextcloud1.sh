@@ -15,11 +15,12 @@ chsh -s zsh
 grep zsh /etc/shells
 echo -e "\n--- get the oh-my-zsh rep ---"
 sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+## problem here the above command stop the scritpt.
 echo -e "\n--- set the theme ---"
 sed -i .bck-$(date +%d%m%Y) 's|^\(ZSH_THEME *=\).*|\1"aussiegeek"|g' /root/.zshrc
 ## add some aliases
 echo 'alias zshconfig="emacs ~/.zshrc"' >> /root/.zshrc
-echo 'alias cdetc=cd /usr/local/etc'
+echo 'alias cdetc=cd /usr/local/etc' >> /root/.zshrc
 
  
 ## INSTALL POSTGRESQL and NGINX
@@ -31,11 +32,15 @@ pkg install postgresql95-server
 ## initialise the database server
 echo -e "\n ---- Initialise the database server  ----"
 su pgsql
-initd -D /usr/local/pgsql/data
+# log as pgsql and stuck here. TODO
+initdb -D /usr/local/pgsql/data
 
 ## Turn on the services and network time synchronisation
 echo -e "\n ---- Turn on the services and network time synchronisation ----"
-sysrc {ntpdate,nginx,postgresql,php_fpm}_enable=YES
+sysrc ntpdate_enable=YES
+sysrc nginx_enable=YES
+sysrc postgresql_enable=YES
+sysrc php_fpm_enable=YES
 sysrc ntpdate_hosts=0.oceania.pool.ntp.org
 
 ## Turn on postgresql server
