@@ -16,8 +16,12 @@ echo -e "\nzsh_version : $(zsh --version)"
 chsh -s zsh
 grep zsh /etc/shells
 echo -e "\n--- get the oh-my-zsh rep ---"
-sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+
+#sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 ## problem here the above command stop the scritpt.
+
+
+
 echo -e "\n--- set the theme ---"
 sed -i .bck-$(date +%d%m%Y) 's|^\(ZSH_THEME *=\).*|\1"aussiegeek"|g' /root/.zshrc
 ## add some aliases
