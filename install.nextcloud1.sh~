@@ -1,0 +1,55 @@
+#!/bin/sh
+
+echo "Install nextcloud"
+echo "Let's go..."
+
+pkg update
+
+## install package for easy use of jail
+pkg install git emacs tree wget zsh powerline-fonts pgpgpg tree
+
+## INSTALL POSTGRESQL and NGINX
+## at the time of this writing, the PHP PDO module for Postgres requires version 9.5
+pkg install nginx
+pkg install postgresql95-server
+
+## initialise the database server
+su pgsql
+initd -D /usr/local/pgsql/data
+
+## Turn on the services and network time synchronisation
+sysrc {ntpdate,nginx,postgresql,php_fpm}_enable=YES
+sysrc ntpdate_hosts=0.oceania.pool.ntp.org
+
+## Turn on postgresql server
+service postgresql start
+## Create a user 'nextcloud' in postgresql
+createuser -U pgsql nextcloud
+## Create a database named nextcloud
+createdb -U pgsql nextcloud -O nextcloud -e
+
+##Installing PHP
+pkg install php71 php71-{ftp,ctype,dom,gd,iconv,json,xml,mbstring,posix,simplexml,xmlreader,xmlwriter,zip,zlib,session,hash,filter,opcache,pdo_pgsql,curl,openssl,fileinfo}
+##Coonfiguring PHP
+##clear_env = no
+#listen.owner = www
+#listen.group = www
+
+##configuring the php.ini
+cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
+
+# opcache.enable=1
+# opcache.enable_cli=0
+# opcache.memory_consumption=128
+# opcache.interned_strings_buffer=8
+# opcache.max_accelerated_files=10000
+# opcache.revalidate_freq=2
+# opcache.save_comments=1
+
+# upload_max_filesize = 1G
+
+## start  php
+service php-fpm start
+
+## start nginx
+service nginx start
