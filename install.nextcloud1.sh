@@ -2,6 +2,8 @@
 
 echo "Install nextcloud"
 echo "Let's go..."
+cd /root/install.nextcloud
+git config --global user.email "francois.oph@gmail.com"
 
 pkg update
 
@@ -55,7 +57,7 @@ DBNAME=nextcloud
 
 createuser -U pgsql $USERDB
 ## Create a database named nextcloud
-createdb --username pgsql nextcloud --owner $USERDB -e
+createdb --username pgsql $DBNAME --owner $USERDB -e
 
 ##Installing PHP
 echo -e "\n ----  install PHP and modules PHP ----"
