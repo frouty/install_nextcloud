@@ -39,6 +39,7 @@ pkg install postgresql95-server
 echo -e "\n ---- Initialise the database server  ----"
 su pgsql
 # log as pgsql and stuck here. TODO
+# test sudo initdb -D .....
 initdb -D /usr/local/pgsql/data
 
 ## Turn on the services and network time synchronisation
@@ -65,20 +66,45 @@ createdb --username pgsql $DBNAME --owner $USERDB -e
 
 ##Installing PHP
 echo -e "\n ----  install PHP and modules PHP ----"
-pkg install php72 php72-ftp php72-ctype php72-dom php72-gdz php72-iconv php72-json php72-xml php72-mbstring php72-posix php72-simplexml php72-xmlreader php72-xmlwriter php72-zip php72-zlib php72-session php72-hash php72-filter php72-opcache php72-pdo_pgsql php72-curl php72-openssl php72-fileinfo php72-pgsql
+pkg install php72 php72-ftp php72-ctype php72-dom php72-gd php72-iconv php72-json php72-xml php72-mbstring php72-posix php72-simplexml php72-xmlreader php72-xmlwriter php72-zip php72-zlib php72-session php72-hash php72-filter php72-opcache php72-pdo_pgsql php72-curl php72-openssl php72-fileinfo php72-pgsql
 
-echo '\n ---  bye  -----'
-exit 1
 
-##Coonfiguring PHP
+
+##Coonfiguring PHP : /usr/local/etc/php-fpm.d/www.conf
+##clear_env = no
+#listen.owner = www
+#listen.group = www
 echo -e "\n ----  configure  PHP  ----"
+
+WWW=/usr/local/etc/php-fpm.d/www.conf
+
+if grep clear_env  $WWW;
+then
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(clear_info *=).*|\2"0"|g' $WWW
+else
+    echo 'clear_env = 0' >> $WWW
+fi
+if grep listen.owner  $WWW;
+then
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.owner *=).*|\2"www"|g' $WWW
+else
+    echo 'listen.owner = www' >> $WWWI
+fi
+if grep listen.group  $WWW;
+then
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.group *=).*|\2"www"|g' $WWW
+else
+    echo 'listen.owner = www' >> $WWW
+fi
+
 ##clear_env = no
 #listen.owner = www
 #listen.group = www
 
 ##configuring the php.ini
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
-
+echo '\n ---  bye  -----'
+exit 1
 # opcache.enable=1
 # opcache.enable_cli=0
 # opcache.memory_consumption=128
