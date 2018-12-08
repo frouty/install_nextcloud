@@ -51,13 +51,15 @@ service postgresql start
 ## -e --echo Echo the commands that createdb generates and sends to the server.
 
 USERDB=datamanager
+DBNAME=nextcloud
+
 createuser -U pgsql $USERDB
 ## Create a database named nextcloud
 createdb --username pgsql nextcloud --owner $USERDB -e
 
 ##Installing PHP
 echo -e "\n ----  install PHP and modules PHP ----"
-pkg install php72 php72-{ftp,ctype,dom,gd,iconv,json,xml,mbstring,posix,simplexml,xmlreader,xmlwriter,zip,zlib,session,hash,filter,opcache,pdo_pgsql,curl,openssl,fileinfo}
+pkg install php72 php72-ftp php72-ctype php72-dom php72-gdz php72-iconv php72-json php72-xml php72-mbstring php72-posix php72-simplexml php72-xmlreader php72-xmlwriter php72-zip php72-zlib php72-session php72-hash php72-filter php72-opcache php72-pdo_pgsql php72-curl php72-openssl php72-fileinfo php72-pgsql
 
 echo '\n ---  bye  -----'
 exit 1
