@@ -106,7 +106,7 @@ if grep date.timezone $PHPINI;
 then
     sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(date.timezone *=).*|\2"Pacific/Noumea"|g' $PHPINI
 else
-    echo 'ate.timezone = Pacific/Noumea' >> $PHPINI
+    echo 'date.timezone = Pacific/Noumea' >> $PHPINI
 fi
 
 if  grep apc.enable_cli $PHPINI;
@@ -221,3 +221,4 @@ exit 1
 
 /usr/local/bin/perl5.26.3: No such file or directory
 *** Error code 127
+je n'y arrive pas on vas essayer avec 
