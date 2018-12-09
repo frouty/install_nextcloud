@@ -1,14 +1,26 @@
 #!/bin/sh
 
+# @author: Laurent FRANCOIS
+# @date: 2018-12-06
+#
+# Bash script to install Nextcloud in FreeBSD (FreeNAS)
+#
+# git must have been installed. 
+
 echo "Install nextcloud"
 echo "Let's go..."
 cd /root/install.nextcloud
-git config --global user.email "francois.oph@gmail.com"
+
+
 
 pkg update
 
 ## install package for easy use of jail
-pkg install  emacs tree wget zsh powerline-fonts pgpgpg tree sudo xtail
+pkg install  emacs tree wget zsh powerline-fonts pgpgpg tree sudo xtail git
+
+# config git
+# we can't clone git rep because we have to add an ssh in github.com
+git config --global user.email "francois.oph@gmail.com"
 
 ## change to zsh
 echo -e "\n--- change shell to zsh ---"
@@ -17,10 +29,9 @@ chsh -s zsh
 grep zsh /etc/shells
 echo -e "\n--- get the oh-my-zsh rep ---"
 
-#sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+## install oh-my-zsh 
+wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | zsh
 ## problem here the above command stop the scritpt.
-
-
 
 echo -e "\n--- set the theme ---"
 sed -i .bck-$(date +%d%m%Y) 's|^\(ZSH_THEME *=\).*|\1"aussiegeek"|g' /root/.zshrc

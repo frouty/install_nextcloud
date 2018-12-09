@@ -13,6 +13,14 @@
 # OPTIONAL: run the command straightforward
 # $ mkselfssl mycertname 365
 
+# TMP DIR
+DIR_TMP = /root/tmp
+
+if [ ! -d $DIR_TMP ]; then
+    sudo mkdir -p $DIR_TMP
+fi    
+cd $DIR_TMP
+
 # Default dir to place the Certificate
 DIR_ETC="/usr/local/etc"
 DIR_SSL_CERT="$DIR_ETC/ssl/cert"
@@ -53,6 +61,10 @@ fi
 # Place SSL Certificate within defined path
 sudo cp $SSLNAME.key $DIR_SSL_KEY/$SSLNAME.key
 sudo cp $SSLNAME.crt $DIR_SSL_CERT/$SSLNAME.crt
+
+# Remove SSL Certificate from tmp dir
+rm $DIR_TMP/$SSLNAME.key
+rm $DIR_TMP/$SSLNAME.crt
 
 # Print output for Nginx site config
 printf "+-------------------------------
