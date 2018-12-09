@@ -8,7 +8,7 @@ git config --global user.email "francois.oph@gmail.com"
 pkg update
 
 ## install package for easy use of jail
-pkg install  emacs tree wget zsh powerline-fonts pgpgpg tree
+pkg install  emacs tree wget zsh powerline-fonts pgpgpg tree sudo xtail
 
 ## change to zsh
 echo -e "\n--- change shell to zsh ---"
@@ -27,7 +27,7 @@ sed -i .bck-$(date +%d%m%Y) 's|^\(ZSH_THEME *=\).*|\1"aussiegeek"|g' /root/.zshr
 ## add some aliases
 echo 'alias zshconfig="emacs ~/.zshrc"' >> /root/.zshrc
 echo 'alias cdetc=cd /usr/local/etc' >> /root/.zshrc
-
+echo 'alias tree=tree -C' >> /root/.zshrc
  
 ## INSTALL POSTGRESQL and NGINX
 ## at the time of this writing, the PHP PDO module for Postgres requires version 9.5
@@ -80,19 +80,19 @@ WWW=/usr/local/etc/php-fpm.d/www.conf
 
 if grep clear_env  $WWW;
 then
-    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(clear_info *=).*|\2"0"|g' $WWW
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(clear_info *=).*|\2 no|g' $WWW
 else
-    echo 'clear_env = 0' >> $WWW
+    echo 'clear_env = no' >> $WWW
 fi
 if grep listen.owner  $WWW;
 then
-    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.owner *=).*|\2"www"|g' $WWW
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.owner *=).*|\2 www|g' $WWW
 else
-    echo 'listen.owner = www' >> $WWWI
+    echo 'listen.owner = www' >> $WWW
 fi
 if grep listen.group  $WWW;
 then
-    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.group *=).*|\2"www"|g' $WWW
+    sed -r -i .bck-$(date +%d%m%Y) 's|^([#;]? *)(listen.group *=).*|\2www|g' $WWW
 else
     echo 'listen.owner = www' >> $WWW
 fi
@@ -112,7 +112,6 @@ exit 1
 # opcache.max_accelerated_files=10000
 # opcache.revalidate_freq=2
 # opcache.save_comments=1
-
 # upload_max_filesize = 1G
 
 ## start  php

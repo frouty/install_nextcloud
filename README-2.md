@@ -9,7 +9,7 @@
 # installer git pour pouvoir récuper les scripts de configuration
 cd /root/
 pkg install git
-git clone git@github.com:frouty/install_nextcloud.git
+
 
 ## add new ssh key in git repository
 ssh-keygen -t rsa -b 4096 -C "francois.oph@gmail.com"
@@ -17,13 +17,17 @@ ssh-keygen -t rsa -b 4096 -C "francois.oph@gmail.com"
 ### add eval $(ssh-agent) in ~/.zshrc
 echo 'eval $(ssh-agent)' >> /root/.zshrc
 ### ssh-add <path to private key>
+### clone the repository
+cd /root/
+git clone git@github.com:frouty/install_nextcloud.git
+### chmod +x /root/install.nextcloud/install.nextcloud1.sh
 
 # démarrer le scipt install_nextcloud1.sh 
 qui va installer un certains nombre de paquets pour avoir une console plus jolie et plus fonctionnelle. 
 Qui va installer postgresql php 
 # avoir une plus jolie console.
 ## install zsh and others
-`[jail]pkg install tree zsh git wget powerline-fonts`  
+`[jail]pkg install tree zsh git wget powerline-fonts sudo xtrail`  
 `[jail]zsh --version`  
 ## set zsh as your default shell
 `[jail]chsh -s zsh`
@@ -135,6 +139,9 @@ Success. You can now start the database server using:
 
     pg_ctl -D /usr/local/pgsql/data -l logfile start
 ```
+
+initdb crée un nouvel database cluster. C'est une collection de databases qui est managé pour une instance du server
+
 # Start the postgresql server
 ```
 # service postgresql start
@@ -214,7 +221,7 @@ pkg doesn't include php redis extension
 ```
 mkdir /root/tmp
 cd /root/tmp
-curl -O https://pecl.php.net/get/redis-3.1.4.tgz
+curl -O https://pecl.php.net/get/redis-3.1.4.tgz (4.2.0.tgz)
 tar zxvf redis-3.1.4.tgz
 cd redis-3.1.4
 phpize
@@ -255,6 +262,7 @@ shasum -a 256 -c nextcloud-14.0.4.tar.bz2.sha256 < nextcloud-14.0.4.tar.bz2
 
 #verify authenticity
 echo "Verify authenticity"
+fetch https://nextcloud.com/nextcloud.asc
 gpg --import nextcloud.asc                                                           
 gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 ```
@@ -266,8 +274,9 @@ on va  essayer autre chose.
 j'ai monté /mnt/mlp-pool/nextcloud-data sur /mnt/mlp-pool/iocage/jails/testjail2/root/mynextcloud  
 et dans la jail j'ai mynextcloud qui se trouve sous / (la racine) 
 
+tar -zxvf latest-14.tar.bz2
 mv /root/tmp/nextcloud/* /mynextcloud
-chown -R www /mynextcloud
+chown -R www:www /mynextcloud
 sudo -u www env VISUAL=emacs crontab -e
 */15 * * * * /usr/local/bin/php -f /mynextcloud/cron.php
 
@@ -345,10 +354,21 @@ Je fais un restart de php-fmp et maintenant http://10.66.0.241 est en erreur.
 `# ps axwww -o %cpu,rss,time,command -J IDdelajail` je vois que tous les services on l'air de tourner
 
 
+J'ai modifié le nextcloud.conf. et maintenant ca marche. 
 
+Au moment de la configuration on peut définir le chemin de data folder
 
+J'ai toujours le probleme de la configuration du pb_hba.conf 
 
+pour le trouver find / -name pg_hba.conf
+je rajoute la ligne. et puis j'arrive à me passer l'étape finale de configuration.
 
+host    all             all             0.0.0.0/0               trust
+
+et ensuite j'ai pu la changer en 
+host    nextcloud       datamanager     10.66.0.243/24          trust
+
+Par avant la fin de la phase finale de configuration et bien cela ne marche pas. 
 
 # pour en savoir un peu plus sur les fichiers de configuration de nginx
 https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
