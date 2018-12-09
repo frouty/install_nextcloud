@@ -10,14 +10,9 @@
 echo "Install nextcloud"
 echo "Let's go..."
 cd /root/install.nextcloud
-
-
-
 pkg update
-
 ## install package for easy use of jail
 pkg install  emacs tree wget zsh powerline-fonts pgpgpg tree sudo xtail git
-
 # config git
 # we can't clone git rep because we have to add an ssh in github.com
 git config --global user.email "francois.oph@gmail.com"
@@ -41,14 +36,21 @@ echo 'alias cdetc="cd /usr/local/etc"' >> /root/.zshrc
 echo 'alias tree="tree -C"' >> /root/.zshrc
 echo 'alias tree1="tree -C -L1"'
 echo 'alias tree2="tree -C -L2"'
+echo 'eval $(ssh-agent)' >> /root/.zshrc
+
 ## INSTALL POSTGRESQL and NGINX
 ## at the time of this writing, the PHP PDO module for Postgres requires version 9.5
 echo -e "\n ---- Install nginx et postgresql  ----"
 pkg install nginx
 pkg install postgresql95-server
 
+
+
+
+
 ## initialise the database server
 echo -e "\n ---- Initialise the database server  ----"
+CLUSTER_DB_PATH=" /usr/local/pgsql/data"
 sudo -u pgsql initdb -D /usr/local/pgsql/data
 
 ## Turn on the services and network time synchronisation
@@ -65,11 +67,11 @@ service postgresql start
 
 ## Create a user 'nextcloud' in postgresql
 ## -e --echo Echo the commands that createdb generates and sends to the server.
-
 USERDB=datamanager
 DBNAME=nextcloud
 
 createuser -U pgsql $USERDB
+
 ## Create a database named nextcloud
 createdb --username pgsql $DBNAME --owner $USERDB -e
 
@@ -106,13 +108,15 @@ else
     echo 'listen.owner = www' >> $WWW
 fi
 
-##clear_env = no
-#listen.owner = www
-#listen.group = www
+
+echo '\n ---  bye  -----'
+echo -e "\n --- CE N'EST PAS FINI --- "
+exit 1
 
 ##configuring the php.ini
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 echo '\n ---  bye  -----'
+echo -e "\n --- CE N'EST PAS FINI --- "
 exit 1
 # opcache.enable=1
 # opcache.enable_cli=0

@@ -288,11 +288,6 @@ echo "include nextcloud.conf;" >> /usr/local/etc/nginx/nginx.conf
 ```
 Il faut mettre 'include nextcloud.conf;' dans un block http.
 
-
-
-
-
-
 `# ps axwww -o %cpu,rss,time,command -J IDdelajail` je vois que tous les services on l'air de tourner
 
 
