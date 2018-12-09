@@ -16,7 +16,7 @@
 # Default dir to place the Certificate
 DIR_ETC="/usr/local/etc/"
 DIR_SSL_CERT="$DIR_ETC/ssl/cert"
-DIR_SSL_KEY="/$DIR_ETC/ssl/private"
+DIR_SSL_KEY="$DIR_ETC/ssl/private"
 
 SSLNAME=$1
 SSLDAYS=$2
@@ -36,7 +36,10 @@ if [[ $SSLDAYS == "" ]]; then
 fi
 
 echo "Creating a new Certificate ..."
-openssl req -x509 -nodes -newkey rsa:2048 -keyout $SSLNAME.key -out $SSLNAME.crt -days $SSLDAYS
+#openssl req -x509 -nodes -newkey rsa:2048 -keyout $SSLNAME.key -out $SSLNAME.crt -days $SSLDAYS
+openssl req -subj '/CN=cabinet goeen/O=Laurent FRANCOIS/C=NC' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt
+
+
 
 # Make directory to place SSL Certificate if it doesn't exists
 if [[ ! -d $DIR_SSL_KEY ]]; then
