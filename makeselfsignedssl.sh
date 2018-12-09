@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # @author Adriano Rosa (http://adrianorosa.com)
 # @date: 2014-05-13 09:43
@@ -14,7 +14,7 @@
 # $ mkselfssl mycertname 365
 
 # Default dir to place the Certificate
-DIR_ETC="/usr/local/etc/"
+DIR_ETC="/usr/local/etc"
 DIR_SSL_CERT="$DIR_ETC/ssl/cert"
 DIR_SSL_KEY="$DIR_ETC/ssl/private"
 
@@ -31,7 +31,7 @@ if [ -z $2 ]; then
   read SSLDAYS
 fi
 
-if [[ $SSLDAYS == "" ]]; then
+if [ $SSLDAYS == "" ]; then
   $SSLDAYS = 365
 fi
 
@@ -42,11 +42,11 @@ openssl req -subj '/CN=cabinet goeen/O=Laurent FRANCOIS/C=NC' -new -newkey rsa:2
 
 
 # Make directory to place SSL Certificate if it doesn't exists
-if [[ ! -d $DIR_SSL_KEY ]]; then
+if [ ! -d $DIR_SSL_KEY ]; then
   sudo mkdir -p $DIR_SSL_KEY
 fi
 
-if [[ ! -d $DIR_SSL_CERT ]]; then
+if [ ! -d $DIR_SSL_CERT ]; then
   sudo mkdir -p $DIR_SSL_CERT
 fi
 
