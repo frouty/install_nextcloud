@@ -33,13 +33,14 @@ echo -e "\n--- get the oh-my-zsh rep ---"
 wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | zsh
 ## problem here the above command stop the scritpt.
 
-echo -e "\n--- set the theme ---"
+echo -e "\n--- Set the theme ---"
 sed -i .bck-$(date +%d%m%Y) 's|^\(ZSH_THEME *=\).*|\1"aussiegeek"|g' /root/.zshrc
 ## add some aliases
 echo 'alias zshconfig="emacs ~/.zshrc"' >> /root/.zshrc
-echo 'alias cdetc=cd /usr/local/etc' >> /root/.zshrc
-echo 'alias tree=tree -C' >> /root/.zshrc
- 
+echo 'alias cdetc="cd /usr/local/etc"' >> /root/.zshrc
+echo 'alias tree="tree -C"' >> /root/.zshrc
+echo 'alias tree1="tree -C -L1"'
+echo 'alias tree2="tree -C -L2"'
 ## INSTALL POSTGRESQL and NGINX
 ## at the time of this writing, the PHP PDO module for Postgres requires version 9.5
 echo -e "\n ---- Install nginx et postgresql  ----"
@@ -48,10 +49,7 @@ pkg install postgresql95-server
 
 ## initialise the database server
 echo -e "\n ---- Initialise the database server  ----"
-su pgsql
-# log as pgsql and stuck here. TODO
-# test sudo initdb -D .....
-initdb -D /usr/local/pgsql/data
+sudo -u pgsql initdb -D /usr/local/pgsql/data
 
 ## Turn on the services and network time synchronisation
 echo -e "\n ---- Turn on the services and network time synchronisation ----"

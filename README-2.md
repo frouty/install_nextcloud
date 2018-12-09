@@ -1,6 +1,68 @@
-# créer la jail
+## créer la jail
 - `iocage fetch` # pour avoir la liste des releases
 - `iocage create -r 11.2-RELEASE -n unnomdejail  ip4_addr="igb0|10.66.0.241/24"`
+ou en webGUI
+### création de la jail en webGUI
+Jails > Add Jails
+[root]iocage create -r 11.2-RELEASE -n unnomdejail
+	- MyNextcloud
+	- Release : 11.2 RELEASE-p4
+	- vnet : YES
+	- IPv4 interface : igb0
+	- IPv4 address : 10.66.0.241
+	- IPv4 mask : 24
+	- IPv4 default Router : 10.66.0.1
+	- Autostart Yes
+
+## Creation des datasets
+
+FreeNAS WebUI  
+Create 2 datasets one for nextcloud files and one for database
+Storage > Create ZFS Dataset
+
+    Dataset Name = nextcloud-files
+    Compression level = lz4
+    Enable atime = Off
+
+    Dataset Name = nextcloud-db
+    Compression level = zle
+    Enable atime = Off
+    Record Size = 16K
+	
+## création d'un nouvel user pour la database	
+Accounts > Users > Add new user 
+	Full Name : SQL user
+	Username : pgsql
+	Password
+	No login
+
+## changement des permissions
+Storage > Pools > 	
+	- nextcloud-db permission > 
+	- ACL type : Unix
+	- Apply User
+	- User : pgsql
+	- Apply group 
+	- Group : wheel
+	- Apply permissions recursively : Yes
+
+
+## add storages in the jail
+Jails > Mount points > 
+	- Sources : dataset on est outside de la jail. 
+	- destination : on se trouve dans la jail : /mnt/iocage/jails/MyNextcloud/mnt/files
+	
+	au final :
+	- source : /mnt/mlp-pool/nextcloud-files 
+	- Destination : /mnt/mlp-pool/iocage/jails/MyNextcloud/root/mnt/files 
+	
+	et 
+	- source : /mnt/mlp-pool/nextcloud-db
+	- Destination : /mnt/mlp-pool/iocage/jails/MyNextcloud/root/user/local/pgsql/data
+	
+### Setting primary cache In FreeNAS UserSpace Shell:
+	WebGUI > shell > $ zfs set primarycache=metadata mlp-pool/jail/nextcloud/data/nextcloud-db
+
 
 # se connecter à la nouvelle jail
 - `iocage start unnomdejail`
@@ -9,8 +71,6 @@
 # installer git pour pouvoir récuper les scripts de configuration
 cd /root/
 pkg install git
-
-
 ## add new ssh key in git repository
 ssh-keygen -t rsa -b 4096 -C "francois.oph@gmail.com"
 ### utiliser vi pour faire un copier/coller de la clef. on peut laisser les retours à la ligne.
@@ -53,65 +113,6 @@ logout > login.
 # INSTALLATION DE NEXTCLOUD
 https://medium.com/@vermaden/nextcloud-13-on-freebsd-95cef1fad291
 
-## Creation des datasets
-
-FreeNAS WebUI  
-Create 2 datasets one for nextcloud files and one for database
-Storage > Create ZFS Dataset
-
-    Dataset Name = nextcloud-files
-    Compression level = lz4
-    Enable atime = Off
-
-    Dataset Name = nextcloud-db
-    Compression level = zle
-    Enable atime = Off
-    Record Size = 16K
-	
-## création d'un nouvel user pour la database	
-Accounts > Users > Add new user 
-	Full Name : SQL user
-	Username : mysql
-	Password
-	No login
-
-## changement des permissions
-Storage > Pools > 	
-	- nextcloud-db permission > 
-	- ACL type : Unix
-	- Apply User
-	- User : mysql
-	- Apply group 
-	- Group : wheel
-	- Apply permissions recursively : Yes
-
-## création de la jail
-Jails > Add Jails
-[root]iocage create -r 11.2-RELEASE -n unnomdejail
-	- MyNextcloud
-	- Release : 11.2 RELEASE-p4
-	- vnet : YES
-	- IPv4 interface : igb0
-	- IPv4 address : 10.66.0.241
-	- IPv4 mask : 24
-	- IPv4 default Router : 10.66.0.1
-	- Autostart Yes
-
-## add storages in the jail
-Jails > Mount points > 
-	- Sources : dataset on est outside de la jail. 
-	- destination : on se trouve dans la jail : /mnt/iocage/jails/MyNextcloud/data
-	
-	au final :
-	- source : /mnt/mlp-pool/nextcloud-files 
-	- Destination : /mnt/mlp-pool/iocage/jails/MyNextcloud/root/mnt/files 
-	
-	et 
-	- source : /mnt/mlp-pool/nextcloud-db
-	- Destination : /mnt/mlp-pool/iocage/jails/MyNextcloud/root/var/db/mysql
-	
-### Setting primary cache In FreeNAS UserSpace Shell:
-	WebGUI > shell > $ zfs set primarycache=metadata mlp-pool/jail/nextcloud/data/nextcloud-db
 
 
 # autre tuto sur l'install de nexcloud freebsd11 et nginx et postgresql
@@ -132,8 +133,7 @@ pkg install postgresql95-server
 # initialize database
 ```
 ## initialise the database server
-su pgsql
-initd -D /usr/local/pgsql/data
+sudo -u pgsql initd -D /usr/local/pgsql/data
 
 Success. You can now start the database server using:
 
@@ -275,10 +275,10 @@ j'ai monté /mnt/mlp-pool/nextcloud-data sur /mnt/mlp-pool/iocage/jails/testjail
 et dans la jail j'ai mynextcloud qui se trouve sous / (la racine) 
 
 tar -zxvf latest-14.tar.bz2
-mv /root/tmp/nextcloud/* /mynextcloud
-chown -R www:www /mynextcloud
+mv /root/tmp/nextcloud/ /usr/local/www
+chown -R www:www /usr/local/www
 sudo -u www env VISUAL=emacs crontab -e
-*/15 * * * * /usr/local/bin/php -f /mynextcloud/cron.php
+*/15 * * * * /usr/local/bin/php -f /usr/local/www/nextcloud/cron.php
 
 ### configuring nginx
 ```
@@ -288,9 +288,151 @@ echo "include nextcloud.conf;" >> /usr/local/etc/nginx/nginx.conf
 ```
 Il faut mettre 'include nextcloud.conf;' dans un block http.
 
-file or directory:fopen('/etc/ssl/nginx/cloud.example.com.crt','r') error:2006D080:BIO routines:BIO_new_file:no such file)
-nginx: configuration file /usr/local/etc/nginx/nginx.conf test failed
 
+
+
+
+
+`# ps axwww -o %cpu,rss,time,command -J IDdelajail` je vois que tous les services on l'air de tourner
+
+
+J'ai modifié le nextcloud.conf. et maintenant ca marche. 
+
+Au moment de la configuration on peut définir le chemin de data folder
+
+J'ai toujours le probleme de la configuration du pb_hba.conf 
+
+pour le trouver find / -name pg_hba.conf
+je rajoute la ligne. et puis j'arrive à me passer l'étape finale de configuration.
+
+`host    all             all             0.0.0.0/0               trust`
+
+et ensuite j'ai pu la changer en 
+`host    nextcloud       datamanager     10.66.0.243/24          trust` et cela continu à fonctionner
+
+Par contre avant la fin de la phase finale de configuration et bien cela ne marche pas.
+
+
+
+# pour en savoir un peu plus sur les fichiers de configuration de nginx
+https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
+https://gist.github.com/jessedearing/2351836
+
+# self signed certificate
+
+run le script makeselfsignedssl.sh 
+
+sinon en ressources:
+```
+pkg install openssl
+cd /root/tmp
+openssl genrsa -des3 -out myssl.key 1024
+openssl req -new -key myssl.key -out myssl.csr
+cp myssl.key myssl.key.org
+openssl rsa -in myssl.key.org -out myssl.key
+rm myssl.key.org
+openssl x509 -req -days 365 -in myssl.csr -signkey myssl.key -out myssl.crt
+mkdir -p /usr/local/etc/ssl/{certs,private}
+cp /root/tmp/myssl.crt /usr/local/etc/ssl/certs/
+cp /root/tmp/myssl.key /usr/local/etc/ssl/private
+
+```
+```
+#!/bin/bash
+echo "Generating an SSL private key to sign your certificate..."
+openssl genrsa -des3 -out myssl.key 1024
+
+echo "Generating a Certificate Signing Request..."
+openssl req -new -key myssl.key -out myssl.csr
+
+echo "Removing passphrase from key (for nginx)..."
+cp myssl.key myssl.key.org
+openssl rsa -in myssl.key.org -out myssl.key
+rm myssl.key.org
+
+echo "Generating certificate..."
+openssl x509 -req -days 365 -in myssl.csr -signkey myssl.key -out myssl.crt
+
+echo "Copying certificate (myssl.crt) to /etc/ssl/certs/"
+mkdir -p  /etc/ssl/certs
+cp myssl.crt /etc/ssl/certs/
+
+echo "Copying key (myssl.key) to /etc/ssl/private/"
+mkdir -p  /etc/ssl/private
+cp myssl.key /etc/ssl/private/
+```
+
+# regle nat sur le routeur
+network > firewall > Port forwards 
+source zone : wan
+source ip address : any
+source port : any
+external IP : any
+external port 444 (odoo is on 443)
+internal zone : lan
+internal ip address : 10.66.0.243 <--- IP de la jail 
+internal port any
+
+Ca marche mais le site repond access through untrusted domain.
+/usr/local/www/nextcloud/config/config.sample.php
+usr/local/www/nextcloud/config/config.php
+https://help.nextcloud.com/t/adding-a-new-trusted-domain/26
+
+# config nextcloud/config.php
+$CONFIG = array (
+  'instanceid' => 'oc6yzvt1yaal',
+  'passwordsalt' => '0hDr5CXAO9qRxjlh6akWcDR6Grk0Ne',
+  'secret' => 'UcEIIFyYaNpYyruq87c51F8CrbfXjuQrgVSxZlmrltjlZ6Kk',
+  'trusted_domains' =>
+  array (
+    0 => '10.66.0.243',
+    1 => 'goeen.ddns.net'
+  ),
+  'datadirectory' => '/usr/local/www/nextcloud/data',
+  'dbtype' => 'pgsql',
+  'version' => '14.0.4.2',
+  'overwrite.cli.url' => 'http://10.66.0.243',
+  'dbname' => 'nextcloud',
+  'dbhost' => 'localhost:5432',
+  'dbport' => '',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => 'datamanager',
+  'dbpassword' => '',
+  'installed' => true,
+);
+
+`service nginx restart`
+
+#### FIN ####
+
+
+
+
+# let's encrypt
+je n'ai pas utilisé car il semble qu'il faille un nom de domain.
+
+pour permettre https il faut un certificat (un fichier particulier) fourni par a Certificat Authority (CA).  
+let's encrypt est un CA.
+- Acme protocol qui tourne sur le server
+- ssh access sur le server
+- Cerbot ACME client (c'est un client mais il y en a d'autres)
+https://certbot.eff.org/docs/intro.html
+## acme protocole
+pas trouvé grand  chose
+## cerbot ACME  client
+
+https://certbot.eff.org/lets-encrypt/freebsd-nginx
+
+## installation de cerbot ACME client
+### avec le port 
+cd /usr/ports/security/py-certbot && make install clean
+### avec le package
+pkg install py27-certbot
+## get started
+`sudo cerbot certonly`
+permet de selectionner un plugin et des opytions pour obtenir le certificat.
+Recommande de choisir le `webroot plugin`
+apres je n'ai pas compris
 
 ### adding ssl encryption
 pkg install py27-certbot
@@ -350,55 +492,6 @@ You can use Nextcloud over plain http, but we strongly encourage you to use SSL/
 nginx -t c'est bon 
 http://10.66.0.241 me donne la page de nginx pas la page de nextcloud
 Je fais un restart de php-fmp et maintenant http://10.66.0.241 est en erreur.
-
-`# ps axwww -o %cpu,rss,time,command -J IDdelajail` je vois que tous les services on l'air de tourner
-
-
-J'ai modifié le nextcloud.conf. et maintenant ca marche. 
-
-Au moment de la configuration on peut définir le chemin de data folder
-
-J'ai toujours le probleme de la configuration du pb_hba.conf 
-
-pour le trouver find / -name pg_hba.conf
-je rajoute la ligne. et puis j'arrive à me passer l'étape finale de configuration.
-
-host    all             all             0.0.0.0/0               trust
-
-et ensuite j'ai pu la changer en 
-host    nextcloud       datamanager     10.66.0.243/24          trust
-
-Par avant la fin de la phase finale de configuration et bien cela ne marche pas. 
-
-# pour en savoir un peu plus sur les fichiers de configuration de nginx
-https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
-
-
-# let's encrypt
-pour permettre https il faut un certificat (un fichier particulier) fourni par a Certificat Authority (CA).  
-let's encrypt est un CA.
-- Acme protocol qui tourne sur le server
-- ssh access sur le server
-- Cerbot ACME client (c'est un client mais il y en a d'autres)
-https://certbot.eff.org/docs/intro.html
-## acme protocole
-pas trouvé grand  chose
-## cerbot ACME  client
-
-https://certbot.eff.org/lets-encrypt/freebsd-nginx
-
-## installation de cerbot ACME client
-### avec le port 
-cd /usr/ports/security/py-certbot && make install clean
-### avec le package
-pkg install py27-certbot
-## get started
-`sudo cerbot certonly`
-permet de selectionner un plugin et des options pour obtenir le certificat.
-Recommande de choisir le `webroot plugin`
-apres je n'ai pas compris
-
-
 # nextcloud et postgresql 
 installed and enable postgresql extension for php.
 
