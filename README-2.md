@@ -251,6 +251,9 @@ Starting php_fpm.
 ```
 
 ### installing nextcloud
+
+nextcloud-$NCRELEASE --> latest-14
+
 ```
 cd /root/tmp
 fetch https://download.nextcloud.com/server/releases/nextcloud-$NCRELEASE.tar.bz2
@@ -267,57 +270,42 @@ gpg --import nextcloud.asc
 gpg --verify nextcloud-$NCRELEASE.tar.bz2.asc nextcloud-$NCRELEASE.tar.bz2
 ```
 
+
+
 ### where to put the nextcloud installation
+-> /usr/local/www/nextcloud
+
 j'ai fait un dataset nextcloud-data
 je l'ai monté sur /mnt/mlp-poll/jails/testjail2/root/mnt mais je ne le vois pas.
 on va  essayer autre chose.
 j'ai monté /mnt/mlp-pool/nextcloud-data sur /mnt/mlp-pool/iocage/jails/testjail2/root/mynextcloud  
 et dans la jail j'ai mynextcloud qui se trouve sous / (la racine) 
 
-tar -zxvf latest-14.tar.bz2
-mv /root/tmp/nextcloud/ /usr/local/www
+tar -zxvf latest-14.tar.bz2 -C /usr/local/www
 chown -R www:www /usr/local/www
 sudo -u www env VISUAL=emacs crontab -e
 */15 * * * * /usr/local/bin/php -f /usr/local/www/nextcloud/cron.php
 
 ### configuring nginx
+
+cp /root/install_nextcloud/nextcloud.conf.thatwork /usr/local/etc/nginx/nextcloud.conf
+
+Mettre 'include nextcloud.conf;' dans un block http de  /usr/local/etc/nginx/nginx.conf
+
 ```
 cd /usr/local/etc/nginx
  curl -o /usr/local/etc/nginx/nextcloud.conf https://gist.githubusercontent.com/filipp/6547dfe9524a1a05e49f69397ae9adff/raw/298b98e6f49f938fd8664f550b72ac1b3c671a55/nextcloud.conf
 echo "include nextcloud.conf;" >> /usr/local/etc/nginx/nginx.conf
 ```
-Il faut mettre 'include nextcloud.conf;' dans un block http.
+
 
 `# ps axwww -o %cpu,rss,time,command -J IDdelajail` je vois que tous les services on l'air de tourner
 
-
-J'ai modifié le nextcloud.conf. et maintenant ca marche. 
-
-Au moment de la configuration on peut définir le chemin de data folder
-
-J'ai toujours le probleme de la configuration du pb_hba.conf 
-
-pour le trouver find / -name pg_hba.conf
-je rajoute la ligne. et puis j'arrive à me passer l'étape finale de configuration.
-
-`host    all             all             0.0.0.0/0               trust`
-
-et ensuite j'ai pu la changer en 
-`host    nextcloud       datamanager     10.66.0.243/24          trust` et cela continu à fonctionner
-
-Par contre avant la fin de la phase finale de configuration et bien cela ne marche pas.
-
-
-
-# pour en savoir un peu plus sur les fichiers de configuration de nginx
-https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
-https://gist.github.com/jessedearing/2351836
-
-# self signed certificate
+# self signed certificate <--- j'en suis là pour la Jail MyNextcloud.
 
 run le script makeselfsignedssl.sh 
 
-sinon en ressources:
+exemple de script:
 ```
 pkg install openssl
 cd /root/tmp
@@ -355,6 +343,34 @@ cp myssl.crt /etc/ssl/certs/
 echo "Copying key (myssl.key) to /etc/ssl/private/"
 mkdir -p  /etc/ssl/private
 cp myssl.key /etc/ssl/private/
+```
+
+service nginx restart
+
+### configuration de pg_hba.conf
+
+J'ai toujours le probleme de la configuration du pb_hba.conf 
+
+pour le trouver find / -name pg_hba.conf
+je rajoute la ligne. et puis j'arrive à me passer l'étape finale de configuration.
+
+`host    all             all             0.0.0.0/0               trust`
+
+et ensuite j'ai pu la changer en 
+`host    nextcloud       datamanager     10.66.0.243/24          trust` et cela continu à fonctionner
+
+Par contre avant la fin de la phase finale de configuration et bien cela ne marche pas.
+
+
+https://IPdelajail:444
+
+
+Au moment de la configuration on peut définir le chemin de data folder
+
+# pour en savoir un peu plus sur les fichiers de configuration de nginx
+https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
+https://gist.github.com/jessedearing/2351836
+
 ```
 
 # regle nat sur le routeur
