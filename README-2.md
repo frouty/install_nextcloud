@@ -301,7 +301,7 @@ echo "include nextcloud.conf;" >> /usr/local/etc/nginx/nginx.conf
 
 `# ps axwww -o %cpu,rss,time,command -J IDdelajail` je vois que tous les services on l'air de tourner
 
-# self signed certificate <--- j'en suis là pour la Jail MyNextcloud.
+# self signed certificate 
 
 run le script makeselfsignedssl.sh 
 
@@ -347,7 +347,12 @@ cp myssl.key /etc/ssl/private/
 
 service nginx restart
 
-### configuration de pg_hba.conf
+https://IPDELAJAIL:444
+
+
+
+### configuration de pg_hba.conf <--- j'en suis là pour la Jail MyNextcloud.
+
 
 J'ai toujours le probleme de la configuration du pb_hba.conf 
 
@@ -363,6 +368,37 @@ Par contre avant la fin de la phase finale de configuration et bien cela ne marc
 
 
 https://IPdelajail:444
+username : ce que l'on veut eg: admin
+password :  ce que l'on veut 
+
+Data folder : /mnt/files
+
+datamanager
+pas de password
+/usr/local/pgsql/data
+
+me dit qu'il ne peut pas écrire dans le /mnt/files --> chown www:www /mnt/files.
+
+
+probleme de config du serveur postgresql
+
+[jail]chown -R pgsql:pgsql /usr/local/data
+[jail]su - pgsql
+[jail]pg_ctl -D /usr/local/pgsql/data initdb
+[jail] service postgresql start 
+[jail]su - pgsql
+$ psql
+$psql -d nextcloud
+$psql: FATAL:  database "nextcloud" does not exist
+$psql -h localhost
+$psql: FATAL:  no pg_hba.conf entry for host "10.66.0.241", user "pgsql", database "pgsql", SSL off
+je fais la maneuvre sur pg_hba.conf
+ createuser datamanager --pwprompt
+password comme d'habitude.
+createdb -O datamanager mynextcloud
+
+et c'est bon cette fois 
+
 
 
 Au moment de la configuration on peut définir le chemin de data folder
