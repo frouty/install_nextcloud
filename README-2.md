@@ -371,9 +371,10 @@ Au moment de la configuration on peut définir le chemin de data folder
 https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
 https://gist.github.com/jessedearing/2351836
 
-```
+
 
 # regle nat sur le routeur
+
 network > firewall > Port forwards 
 source zone : wan
 source ip address : any
@@ -384,12 +385,16 @@ internal zone : lan
 internal ip address : 10.66.0.243 <--- IP de la jail 
 internal port any
 
-Ca marche mais le site repond access through untrusted domain.
+Ca marche mais le site repond access through untrusted domain. Il faut configure nextcloud/php.config.
+	
+
+# config nextcloud/config.php
+
 /usr/local/www/nextcloud/config/config.sample.php
 usr/local/www/nextcloud/config/config.php
 https://help.nextcloud.com/t/adding-a-new-trusted-domain/26
 
-# config nextcloud/config.php
+
 $CONFIG = array (
   'instanceid' => 'oc6yzvt1yaal',
   'passwordsalt' => '0hDr5CXAO9qRxjlh6akWcDR6Grk0Ne',
@@ -419,7 +424,8 @@ $CONFIG = array (
 
 
 
-# let's encrypt
+# let's encrypt. Je n'ai pas utilisé.
+
 je n'ai pas utilisé car il semble qu'il faille un nom de domain.
 
 pour permettre https il faut un certificat (un fichier particulier) fourni par a Certificat Authority (CA).  
