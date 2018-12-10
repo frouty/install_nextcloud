@@ -45,7 +45,7 @@ fi
 
 echo "Creating a new Certificate ..."
 #openssl req -x509 -nodes -newkey rsa:2048 -keyout $SSLNAME.key -out $SSLNAME.crt -days $SSLDAYS
-openssl req -subj '/CN=cabinet goeen/O=Laurent FRANCOIS/C=NC' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout server.key -out server.crt
+openssl req -subj '/CN=cabinet goeen/O=Laurent FRANCOIS/C=NC' -new -newkey rsa:2048 -sha256 -days $SSLDAYS  -nodes -x509 -keyout $SSLNAME.key -out  $SSLNAME.crt
 
 
 
