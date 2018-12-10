@@ -22,9 +22,9 @@ fi
 cd $DIR_TMP
 
 # Default dir to place the Certificate
-DIR_ETC="/usr/local/etc"
-DIR_SSL_CERT="$DIR_ETC/ssl/cert"
-DIR_SSL_KEY="$DIR_ETC/ssl/private"
+DIR_ETC="/usr/local/etc/"
+DIR_SSL_CERT="$DIR_ETC/nginx/ssl/cert"
+DIR_SSL_KEY="$DIR_ETC/nginx/ssl/private"
 
 SSLNAME=$1
 SSLDAYS=$2
