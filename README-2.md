@@ -458,7 +458,8 @@ $CONFIG = array (
 #### FIN ####
 
 
-
+# Comment récuperer les fichiers et les transférer sur le nouveau nextcloud.
+/mnt/mnemosys/jails/nextcloud_1/media/admin/files tout est là. 
 
 # let's encrypt. Je n'ai pas utilisé.
 
@@ -570,3 +571,35 @@ quand un client demande une connection la demande spécifie une database, un pos
 - local pour les 
 
 ### fichier de conf de postgresql : ' /usr/local/pgsql/data/postgresql.conf'
+
+
+## comment se loguer en ssh sur la jail du freenas de la maison
+
+ssh root@ipdufreenas
+jls pour avoir la liste des jails
+jexec nextcloud_1 tcsh
+
+- 1 enable ssh 
+  - `nano /etc/rc.conf`
+  - sshd_enable = YES
+  - ou sysrc sshd_enable=YES
+- 2 Allow root login
+  - `nano /etc/ssh/sshd_config`
+  - PermitRootLogin YES
+- 3 start SSH service
+  - `service sshd start` 
+- 4 change root passwd
+  - `passwd`
+  
+## recuperer les data depuis le nextcloud
+- 1 trouver ou sont les data.
+	- sur le nextcloud du cabinet : dans la jail c'est : /mnt/files/admin/files
+
+	- sur le nextcloud de la maison /media/admin/files
+- 2 se loguer en ssh sur la jail 
+	- `ssh root@192.168.1.205`
+- 3 récupérer les datas 
+  - `rsync -avzh /media/admin/files/ lof@192.168.1.121:/home/lof/nextcloudbck/`
+
+## comment transférer les datas sur la jail du cabinet
+
